@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Light Control</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #fff);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      color: #00796b;
+    }
+
+    .btn-container {
+      display: flex;
+      gap: 40px;
+    }
+
+    .control-btn {
+      padding: 20px 40px;
+      font-size: 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .on-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .on-btn:hover {
+      background-color: #45a049;
+    }
+
+    .off-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .off-btn:hover {
+      background-color: #e53935;
+    }
+
+    .status {
+      margin-top: 40px;
+      font-size: 1.2rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Smart Light Control</h1>
+
+  <div class="btn-container">
+    <button class="control-btn on-btn" onclick="sendCommand('on')">Turn ON</button>
+    <button class="control-btn off-btn" onclick="sendCommand('off')">Turn OFF</button>
+  </div>
+
+  <div class="status" id="statusMsg">Status: Waiting for command...</div>
+
+  <script>
+    function sendCommand(command) {
+      fetch('/api/control', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ command: command })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('statusMsg').innerText = "Status: " + data.status;
+      })
+      .catch(err => {
+        document.getElementById('statusMsg').innerText = "Status: Error sending command.";
+        console.error(err);
+      });
+    }
+  </script>
+
+</body>
+</html>

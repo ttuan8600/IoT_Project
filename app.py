@@ -16,7 +16,7 @@ def set_command():
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE command SET state = %s WHERE id = 1", (command,))
+    cursor.execute("UPDATE command SET state = ? WHERE id = 1", (command,))
     conn.commit()
     conn.close()
 
@@ -32,4 +32,4 @@ def get_command():
     return jsonify({'command': row[0] if row else 'unknown'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    app.run(host='0.0.0.0', port=5003, debug=True)

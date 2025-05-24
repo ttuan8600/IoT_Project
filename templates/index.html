@@ -7,7 +7,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #e0f7fa, #fff);
+      background: #f0f0f0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -16,48 +16,70 @@
     }
 
     h1 {
-      margin-bottom: 30px;
-      font-size: 2.5rem;
-      color: #00796b;
+      color: #333;
+      margin-bottom: 40px;
     }
 
-    .btn-container {
-      display: flex;
-      gap: 40px;
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 80px;
+      height: 40px;
     }
 
-    .control-btn {
-      padding: 20px 40px;
-      font-size: 1.5rem;
-      border: none;
-      border-radius: 10px;
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
     }
 
-    .on-btn {
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 32px; width: 32px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
       background-color: #4caf50;
-      color: white;
     }
 
-    .on-btn:hover {
-      background-color: #45a049;
+    input:checked + .slider:before {
+      transform: translateX(40px);
     }
 
-    .off-btn {
-      background-color: #f44336;
-      color: white;
+    .bulb {
+      margin-top: 40px;
+      width: 100px;
+      height: 100px;
+      background-color: #ccc;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      transition: 0.4s;
     }
 
-    .off-btn:hover {
-      background-color: #e53935;
+    .on {
+      background-color: #ffeb3b;
+      box-shadow: 0 0 40px #ffeb3b;
     }
 
     .status {
-      margin-top: 40px;
+      margin-top: 20px;
       font-size: 1.2rem;
-      color: #333;
+      color: #555;
     }
   </style>
 </head>
@@ -65,18 +87,34 @@
 
   <h1>Smart Light Control</h1>
 
-  <div class="btn-container">
-    <button class="control-btn on-btn" onclick="sendCommand('1')">Turn ON</button>
-    <button class="control-btn off-btn" onclick="sendCommand('0')">Turn OFF</button>
-  </div>
+  <!-- Toggle switch -->
+  <label class="switch">
+    <input type="checkbox" id="lightSwitch" onchange="handleSwitch(this)">
+    <span class="slider"></span>
+  </label>
 
+  <!-- Bulb visual -->
+  <div class="bulb" id="bulb"></div>
+
+  <!-- Status message -->
   <div class="status" id="statusMsg">Status: Waiting for command...</div>
 
   <script>
+    function handleSwitch(switchElement) {
+      const command = switchElement.checked ? '1' : '0';
+      const bulb = document.getElementById('bulb');
+
+      // Update bulb UI
+      bulb.classList.toggle('on', command === '1');
+
+      // Send command to backend
+      sendCommand(command);
+    }
+
     function sendCommand(command) {
       fetch('/api/control', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command: command })
       })
       .then(res => res.json())
@@ -89,6 +127,5 @@
       });
     }
   </script>
-
 </body>
 </html>
